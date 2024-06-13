@@ -34,7 +34,7 @@ options:
 			-l [level]            Set security level (noAuthNoPriv|authNoPriv|authPriv) (default AuthPriv)
 			-a [protocol]         Set authentication protocol (MD5|SHA) (default SHA)
 			-x [protocol]         Set privacy protocol (DES|AES) (default AES)
-
+			-X [password]         Set privacy protocol password
             -2 [community name]         Use SNMPv2 (no need user/password) & define community name (ex: public)
 
             -h [hostname or IP](:port)  Hostname or IP. You can also define a different port
