@@ -32,6 +32,7 @@ SNMPVersion="3"
 SNMPAuth="AuthPriv"
 SNMPAuthProt="SHA"
 SNMPPrivProt="AES"
+SNMPPrivPassword=""
 SNMPV2Community="public"
 SNMPTimeout="10"
 warningTemperature="50"
@@ -91,6 +92,7 @@ usage()
         echo "		  -l [level]            Set security level (noAuthNoPriv|authNoPriv|authPriv) (default ${SNMPAuth})"
         echo "		  -a [protocol]		Set authentication protocol (MD5|SHA) (default ${SNMPAuthProt})"
         echo "		  -x [protocol]		Set privacy protocol (DES|AES) (default ${SNMPPrivProt})"
+        echo "        -X [password]        Privacy password for SNMPv3"
         echo ""
         echo "            -2 [community name]	  	Use SNMPv2 (no need user/password) & define community name (ex: public)"
         echo ""
@@ -118,13 +120,14 @@ if [ "$1" == "--help" ]; then
     usage; exit 0
 fi
 
-while getopts l:a:x:2:W:C:w:c:u:p:h:iUv OPTNAME; do
+while getopts l:a:x:X:2:W:C:w:c:u:p:h:iUv OPTNAME; do
         case "$OPTNAME" in
 	u)	SNMPUser="$OPTARG";;
         p)	SNMPPassword="$OPTARG";;
 	l)	SNMPAuth="$OPTARG";;
 	a)	SNMPAuthProt="$OPTARG";;
 	x)	SNMPPrivProt="$OPTARG";;
+    X)	SNMPPrivPassword="$OPTARG";;
         h)	hostname="$OPTARG";;
         v)	verbose="yes";;
 	2)	SNMPVersion="2"
@@ -163,8 +166,8 @@ else
     if [ "$SNMPVersion" = "2" ] ; then
 	SNMPArgs=" -OQne -v 2c -c $SNMPV2Community -t $SNMPTimeout"
     else
-	SNMPArgs=" -OQne -v 3 -u $SNMPUser -A $SNMPPassword -x ${SNMPPrivProt} -X $SNMPPassword -l ${SNMPAuth} -a ${SNMPAuthProt} -t $SNMPTimeout"
-	if [ ${#SNMPPassword} -lt "8" ] ; then
+	SNMPArgs=" -OQne -v 3 -u $SNMPUser -A $SNMPPassword -x ${SNMPPrivProt} -X $SNMPPrivPassword -l ${SNMPAuth} -a ${SNMPAuthProt} -t $SNMPTimeout"
+	if [ ${#SNMPPrivPassword} -lt "8" ] ; then
 	    echo "snmpwalk:  (The supplied password is too short.)"
 	    exit 1
 	fi
